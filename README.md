@@ -141,11 +141,6 @@ MeetMindAI aims to redefine meetings—not as passive conversations, but as **in
 
 ---
 
-## 📄 License
-
-MIT License (or your preferred license)
-
----
 
 **Meet smarter. Think deeper. Automate everything.**
 
