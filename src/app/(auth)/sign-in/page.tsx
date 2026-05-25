@@ -1,9 +1,10 @@
+import { SignInGate } from "@/modules/auth/ui/views/sign-in-gate";
 import { Suspense } from "react";
 
-const SignInPage = ()=>{
+ const SignInPage = ()=>{
    return (
     <Suspense fallback={<div>Loading...</div>}>
-        sign-in
+        <SignInGate/>
     </Suspense>
    )
 }
