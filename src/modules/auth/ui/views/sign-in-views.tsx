@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { z } from "zod"
+import {FaGoogle,FaGithub} from "react-icons/fa"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
@@ -22,6 +23,7 @@ import { useState } from "react"
 import { OctagonAlertIcon } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 const formSchema=z.object({
   email:z.string().email({message:"Please enter a valid email address"}),
@@ -60,14 +62,32 @@ export const SignInViews = () => {
 
   }
 
+  const onSocial=async(provider:"google"|"github")=>{
+    setError(null);
+    await authClient.signIn.social({
+       provider:provider,
+       callbackURL:"/",
+    },
+    {
+      onSuccess:()=>{
+        
+      },
+      onError:({error})=>{
+        setError(error.mesage)
+      }
+    }
+  )
+  }
+
 
 
  
     return (
+      <div className="flex flex-col gap-6">
     <Card className="w-full max-w-sm mx-auto">
       <CardContent>
        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-2xl font-bold">Welcome Back</h1>
@@ -116,7 +136,37 @@ export const SignInViews = () => {
           <Button className="w-full" type="submit">
             Sign In
           </Button>
+          <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                  <span className="bg-card text-muted-foreground relative z-10 px-2">
+                    Or continue with
+                  </span>
           </div>
+          <div className="grid grid-cols-2 gap-2">
+          <Button
+          className="w-full"
+          variant="outline"
+          type="button"
+          onClick={()=>onSocial("google") }
+          >
+            <FaGoogle/>
+            </Button>
+          <Button
+          className="w-full"
+          variant="outline"
+          type="button"
+          onClick={()=>onSocial("github")}
+          >
+            <FaGithub/>
+            </Button>
+          </div>
+          <div className="text-center text-sm">
+                  Don&apos;t have an account?{" "}
+                  <Link href="/sign-up" className="underline underline-offset-4 ">
+                    Sign Up
+                  </Link>
+                </div>
+          </div>
+      
           </form> 
         <div className="bg-radial from-sidebar-accent to-sidebar relative hidden md:flex flex-col items-center justify-center gap-y-4">
             <Image
@@ -140,6 +190,7 @@ export const SignInViews = () => {
             </Form>
       </CardContent>
     </Card>
+    </div>
 
 
     );
