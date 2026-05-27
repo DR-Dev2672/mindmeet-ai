@@ -32,6 +32,7 @@ const formSchema=z.object({
 
 export const SignInViews = () => {
   const router=useRouter();
+  const [pending,setPending]=useState<boolean>(false)
   const [error,setError]=useState<string|null>(null)
    const form= useForm<z.infer<typeof formSchema>>({
      resolver:zodResolver(formSchema),
@@ -42,6 +43,7 @@ export const SignInViews = () => {
   })
   const onSubmit=async(data:z.infer<typeof formSchema>)=>{
     setError(null);
+    setPending(true);
     await authClient.signIn.email(
       {
       email:data.email,
@@ -51,11 +53,12 @@ export const SignInViews = () => {
     {
       onSuccess:()=>{
         router.push("/")
-        console.log("Sign in successful")
+        setPending(false)
       },
     
       onError:({error})=>{
         setError(error.message)
+        setPending(false);
       }
     }
   )
@@ -64,15 +67,17 @@ export const SignInViews = () => {
 
   const onSocial=async(provider:"google"|"github")=>{
     setError(null);
+    setPending(true);
     await authClient.signIn.social({
        provider:provider,
        callbackURL:"/",
     },
     {
       onSuccess:()=>{
-        
+        setPending(false);
       },
       onError:({error})=>{
+        setPending(false);
         setError(error.mesage)
       }
     }
@@ -84,8 +89,8 @@ export const SignInViews = () => {
  
     return (
       <div className="flex flex-col gap-6">
-    <Card className="w-full max-w-sm mx-auto">
-      <CardContent>
+    <Card className="overflow-hidden p-0">
+      <CardContent className="grid p-0 md:grid-cols-2">
        <Form {...form}>
         <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
@@ -129,7 +134,7 @@ export const SignInViews = () => {
           {!!error &&
           (
             <Alert>
-              <OctagonAlertIcon/>
+              <OctagonAlertIcon className="bg-destructive/10 border-none"/>
               <AlertTitle>{error}</AlertTitle>
             </Alert>
           )}
@@ -168,7 +173,7 @@ export const SignInViews = () => {
           </div>
       
           </form> 
-        <div className="bg-radial from-sidebar-accent to-sidebar relative hidden md:flex flex-col items-center justify-center gap-y-4">
+        <div className="bg-radial  from-[#b7f2cf] to-[#467e5d] relative hidden md:flex flex-col items-center justify-center gap-y-4">
             <Image
               src="/logo.svg"
               alt="Meet.AI logo"
@@ -181,15 +186,16 @@ export const SignInViews = () => {
                 maxHeight: "92px",
               }}
             />
-            <p className="text-2xl font-semibold text-white">Meet.AI</p>
+            <p className="text-2xl font-semibold text-green-600">MeetMind.AI</p>
           </div>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-            By clicking continue, you agree to our 
-            <a href="#">Terms of Service</a> and{" "} <a href="#">Privacy Policy</a>
-            </div>
+          
             </Form>
       </CardContent>
     </Card>
+    <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+            By clicking continue, you agree to our 
+            <a href="#">Terms of Service</a> and{" "} <a href="#">Privacy Policy</a>
+            </div>
     </div>
 
 
